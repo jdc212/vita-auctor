@@ -106,29 +106,23 @@ router.patch("/profile/update", isAuth, attachCurrentUser, async (req, res) => {
 });
 
 router.delete(
-  "/disable-account",
-  isAuth,
-  attachCurrentUser,
-  async (req, res) => {
-    try {
-      const loggedInUser = req.currentUser;
-
-      await UserModel.findOneAndUpdate(
-        {
+    "/disable-account",
+    isAuth,
+    attachCurrentUser,
+    async (req, res) => {
+      try {
+        const loggedInUser = req.currentUser;
+  
+        const deletedUser = await UserModel.deleteOne({
           _id: loggedInUser._id,
-        },
-        {
-          isDisable: true,
-          disableAt: Date.now(),
-        }
-      );
-
-      return res.status(200).json({ msg: "Deletado com sucesso!" });
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ msg: JSON.stringify(error) });
+        });
+  
+        return res.status(200).json(deletedUser);
+      } catch (error) {
+        console.error(error);
+        return res.status(500).json({ msg: JSON.stringify(error) });
+      }
     }
-  }
-);
+  );
 
 module.exports = router;
